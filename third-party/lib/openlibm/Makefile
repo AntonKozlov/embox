@@ -10,15 +10,27 @@ PKG_MD5 := 4bc22ffc211f959080173587e81742ec
 PKG_PATCHES := openlibm_embox.patch
 
 include $(EXTBLD_LIB)
+include $(ROOT_DIR)/mk/core/compiler.mk
 
+ifeq ($(COMPILER),clang)
+
+else
 OLIBM_ARCH ?=
 ifneq ($(filter x86 usermode86,$(ARCH)),)
 OLIBM_ARCH := i386
 endif
 ifeq ($(ARCH), arm)
+OLIBM_CPU  := $(subst -mcpu=,,$(filter -mcpu=%,$(CFLAGS)))
+ifeq ($(strip $(OLIBM_CPU)),cortex-m7)
+# We do not pass -march=armv7e-m because it does not working together with -mcpu=cortex-m7
+# See https://bugs.launchpad.net/gcc-arm-embedded/+bug/1592635
+OLIBM_ARCH :=""
+else
 OLIBM_ARCH := $(subst -march=,,$(filter -march=%,$(CFLAGS)))
+endif
 ifeq ($(strip $(OLIBM_ARCH)),)
 $(error OLIBM_ARCH -march is undefined)
+endif
 endif
 endif
 
