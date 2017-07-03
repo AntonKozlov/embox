@@ -8,12 +8,10 @@ module xen_header {
 module boot {
 	source "boot.S",
 		"kernel_init.c"
-		depends embox.arch.xen.traps
 }
 
 module traps {
-    source "traps.h",
-          "traps.c"
+    source "traps.c"
 }
 
 module event {

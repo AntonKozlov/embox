@@ -14,15 +14,10 @@
 #include <xen/event_channel.h>
 #include <xen/io/console.h>
 #include <xen/event.h>
-//#include <kernel/printk.h>
-//#include <traps.c>
 
 /* Embox interface */
 extern void kernel_start(void);
-//extern void trap_init(void);
 
-
-//extern static void kernel_init(void);
 /* Xen interface */
 uint8_t xen_features[XENFEAT_NR_SUBMAPS * 32];
 
@@ -39,7 +34,6 @@ void xen_kernel_start(start_info_t * start_info) {
 	xen_start_info_global = start_info;
 	HYPERVISOR_shared_info = &xen_shared_info;
 	init_events();
-    ///trap_init();
 	kernel_start();
 
 }

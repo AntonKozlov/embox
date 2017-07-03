@@ -42,13 +42,9 @@ void kernel_start(void) {
  */
 static void kernel_init(void) {
 	arch_init();
-
 	ipl_init();
-
 	diag_init();
-	//printk ("traps init done \n");
-	trap_init();
-	//printk ("traps init done \n");
+	trap_init(); //Probably not best place to init
 }
 
 /**
