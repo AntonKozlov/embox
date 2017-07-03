@@ -31,6 +31,8 @@
 #include <hal/ipl.h>
 #include <mem/objalloc.h>
 
+#include <kernel/printk.h>
+
 
 struct irq_entry {
 	irq_handler_t handler;
@@ -63,6 +65,7 @@ static struct irq_action *irq_table[IRQ_NRS_TOTAL];
 
 int irq_attach(unsigned int irq_nr, irq_handler_t handler, unsigned int flags,
 		void *dev_id, const char *dev_name) {
+    printk("Attach occured\n");
 	struct irq_action *action;
 	int ret = ENOERR;
 
@@ -118,6 +121,7 @@ int irq_attach(unsigned int irq_nr, irq_handler_t handler, unsigned int flags,
 }
 
 int irq_detach(unsigned int irq_nr, void *dev_id) {
+    printk("Detach occured\n");
 	struct irq_action *action;
 	struct irq_entry *entry;
 	int ret = ENOERR;
@@ -153,6 +157,7 @@ int irq_detach(unsigned int irq_nr, void *dev_id) {
 }
 
 void irq_dispatch(unsigned int irq_nr) {
+	printk("Dispatch occured\n");
 	struct irq_entry *entry = NULL;
 	irq_handler_t handler = NULL;
 	void *dev_id = NULL;

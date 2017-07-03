@@ -17,6 +17,7 @@
 static void kernel_init(void);
 static int init(void);
 extern int system_start(void);
+extern void trap_init(void);
 /**
  * The setup of the system, the run level and execution of the idle function.
  */
@@ -25,6 +26,7 @@ void kernel_start(void) {
 	kernel_init();
 
 	init();
+	printk ("Init done\n");
 
 	system_start();
 
@@ -44,6 +46,9 @@ static void kernel_init(void) {
 	ipl_init();
 
 	diag_init();
+	//printk ("traps init done \n");
+	trap_init();
+	//printk ("traps init done \n");
 }
 
 /**

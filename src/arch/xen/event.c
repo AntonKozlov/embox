@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <xen/xen.h>
 #include <xen/event.h>
+#include <kernel/printk.h>
 
 // headers below have xen_ prefix added to name 
 #include <xen_barrier.h>
@@ -30,30 +31,46 @@ static evtchn_handler_t handlers[NUM_CHANNELS];
 
 void EVT_IGN(evtchn_port_t port, struct pt_regs * regs) {};
 
-/* Initialise the event handlers */
 void init_events(void)
 {
-	/* Set the event delivery callbacks */
-#ifdef __i386__
-	HYPERVISOR_set_callbacks(
-		FLAT_KERNEL_CS, (unsigned long)hypervisor_callback,
-		FLAT_KERNEL_CS, (unsigned long)failsafe_callback);
-#elif defined (__x86_64__)
-	HYPERVISOR_set_callbacks(
-		(unsigned long)hypervisor_callback,
-		(unsigned long)failsafe_callback, 0);
-#else
-#error "Unsupported architecture"
-#endif
-	/* Set all handlers to ignore, and mask them */
-	for(unsigned int i=0 ; i<NUM_CHANNELS ; i++)
-	{
-		handlers[i] = EVT_IGN;
-		SET_BIT(i,xen_shared_info.evtchn_mask[0]);
-	}
-	/* Allow upcalls. */
+    int i;
+
+    /* initialize event handler */
+    for ( i = 0; i < NUM_CHANNELS; i++ )
+    {
+        handlers[i] = EVT_IGN;
+        SET_BIT(i,xen_shared_info.evtchn_mask[0]); //mask_evtchn(i);
+    }
+
+    /* Allow upcalls. */
 	xen_shared_info.vcpu_info[0].evtchn_upcall_mask = 0;
+    //arch_init_events();
 }
+
+/* Initialise the event handlers */
+//void init_events(void)
+//{
+	//* Set the event delivery callbacks */
+//#ifdef __i386__
+//	HYPERVISOR_set_callbacks(
+//		FLAT_KERNEL_CS, (unsigned long)hypervisor_callback,
+//		FLAT_KERNEL_CS, (unsigned long)failsafe_callback);
+//#elif defined (__x86_64__)
+//	HYPERVISOR_set_callbacks(
+//		(unsigned long)hypervisor_callback,
+//		(unsigned long)failsafe_callback, 0);
+//#else
+//#error "Unsupported architecture"
+//#endif
+//	/* Set all handlers to ignore, and mask them */
+//	for(unsigned int i=0 ; i<NUM_CHANNELS ; i++)
+//	{
+//		handlers[i] = EVT_IGN;
+//		SET_BIT(i,xen_shared_info.evtchn_mask[0]);
+//	}
+//	/* Allow upcalls. */
+//	xen_shared_info.vcpu_info[0].evtchn_upcall_mask = 0;
+//}
 
 /* Register an event handler and unmask the port */
 void register_event(evtchn_port_t port, evtchn_handler_t handler)
@@ -100,6 +117,7 @@ static inline unsigned long int xchg(unsigned long int * old, unsigned long int 
 /* Dispatch events to the correct handlers */
 void do_hypervisor_callback(struct pt_regs *regs)
 {
+    printk("CALLBACK HYPER\n");
 	unsigned int pending_selector;
 	unsigned int next_event_offset;
 	vcpu_info_t *vcpu = &xen_shared_info.vcpu_info[0];
