@@ -3,6 +3,7 @@ package embox.arch.xen
 module xen_header {
 	source "xen_header.S",
 		"xen_header.lds.S"
+        depends xenstore
 }
 
 module boot {
@@ -12,6 +13,10 @@ module boot {
 
 module traps {
 	source "traps.c"
+}
+
+module xenstore {
+        source "xenstore.c"
 }
 
 module event {
