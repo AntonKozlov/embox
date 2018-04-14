@@ -23,7 +23,6 @@ extern void kernel_start(void);
 /* Xen interface */
 extern void trap_init(void);
 extern int xenstore_init(start_info_t *);
-extern int xenstore_ls(char*, char*, int);
 
 uint8_t xen_features[XENFEAT_NR_SUBMAPS * 32];
 
@@ -39,15 +38,11 @@ void xen_kernel_start(start_info_t * start_info) {
 
 	xen_start_info_global = start_info;
 	HYPERVISOR_shared_info = &xen_shared_info;
-	
+
 	init_events();
 
-
 	xenstore_init(start_info);
-	char list[32];
-	uint32_t len = xenstore_ls("/", list, 32);
-	printk("len = %d\n", len);
-	
+
 	trap_init();
 
 	kernel_start();

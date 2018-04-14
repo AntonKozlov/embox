@@ -3,6 +3,11 @@
 #include <xen/sched.h>
 #include <barrier.h>
 
+#include <kernel/printk.h>
+#include <embox/unit.h>
+
+EMBOX_UNIT_INIT(xenstore_test);
+
 static evtchn_port_t xenstore_evt;
 extern char _text_vma;
 struct xenstore_domain_interface * xenstore;
@@ -108,7 +113,7 @@ int xenstore_write(char * key, char * value)
 	struct xsd_sockmsg msg;
 	msg.type = XS_WRITE;
 	msg.req_id = req_id;
-	msg.tx_id = 0; 
+	msg.tx_id = 0;
 	msg.len = 2 + key_length + value_length;
 	/* Write the message */
 	xenstore_write_request((char*)&msg, sizeof(msg));
@@ -132,7 +137,7 @@ int xenstore_read(char * key, char * value, int value_length)
 	struct xsd_sockmsg msg;
 	msg.type = XS_READ;
 	msg.req_id = req_id;
-	msg.tx_id = 0; 
+	msg.tx_id = 0;
 	msg.len = 1 + key_length;
 	/* Write the message */
 	xenstore_write_request((char*)&msg, sizeof(msg));
@@ -163,7 +168,7 @@ int xenstore_ls(char * key, char * values, int value_length)
 	struct xsd_sockmsg msg;
 	msg.type = XS_DIRECTORY;
 	msg.req_id = req_id;
-	msg.tx_id = 0; 
+	msg.tx_id = 0;
 	msg.len = 1 + key_length;
 	/* Write the message */
 	xenstore_write_request((char*)&msg, sizeof(msg));
@@ -189,8 +194,7 @@ int xenstore_ls(char * key, char * values, int value_length)
 }
 
 /* Test the XenStore driver */
-void xenstore_test()
-{
+int xenstore_test() {
 	// char buffer[1024];
 	// buffer[1023] = '\0';
 	// printk("\n\r");
@@ -218,4 +222,9 @@ void xenstore_test()
 	// 	length -= len + 1;
 	// 	out += len + 1;
 	// }
+
+	char list[32];
+	uint32_t len = xenstore_ls("/", list, 32);
+	printk("len = %d\n", len);
+	return 0;
 }
