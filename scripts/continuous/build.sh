@@ -15,7 +15,7 @@ function bell() {
 bell &
 bell_pid=$!
 
-make &> build.log
+make "$@" &> build.log
 RETVAL=$?
 tail -c 3M build.log
 
