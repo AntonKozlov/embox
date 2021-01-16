@@ -35,7 +35,7 @@ test_case_correct_index_html_should_be_downloaded() {
 	wget $EMBOX_IP/$HTTP_GOLD_SIMPLE_FILE
 	test_retcode
 
-	diff -q $HTTP_GOLD_SIMPLE_FILE $DATA_DIR/$HTTP_GOLD_SIMPLE_FILE
+	diff -q $HTTP_GOLD_SIMPLE_FILE $ROOT_DIR/conf/rootfs/$HTTP_GOLD_SIMPLE_FILE
 	test_retcode
 
 	rm $HTTP_GOLD_SIMPLE_FILE
@@ -135,7 +135,6 @@ tap_down() {
 sudo /etc/init.d/ntp restart
 sudo inetd
 
-cp $CONT_BASE/net/$HTTP_GOLD_SIMPLE_FILE $ROOT_DIR/conf/rootfs/$HTTP_GOLD_SIMPLE_FILE
 make >/dev/null 2>/dev/null
 
 tap_up
